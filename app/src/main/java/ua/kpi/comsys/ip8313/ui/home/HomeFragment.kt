@@ -1,4 +1,4 @@
-package com.example.ip8313.ui.home
+package ua.kpi.comsys.ip8313.ui.home
 
 import android.os.Bundle
 import android.view.LayoutInflater

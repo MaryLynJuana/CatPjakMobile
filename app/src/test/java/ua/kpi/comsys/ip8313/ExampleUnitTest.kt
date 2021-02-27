@@ -1,4 +1,4 @@
-package com.example.ip8313
+package ua.kpi.comsys.ip8313
 
 import org.junit.Test
 

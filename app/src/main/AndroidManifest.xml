@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Lab11">
         <activity
-            android:name="com.example.ip8313.MainActivity"
+            android:name="com.example.ip8313.ua.kpi.comsys.ip8313.MainActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -1,4 +1,4 @@
-package com.example.ip8313
+package ua.kpi.comsys.ip8313
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
