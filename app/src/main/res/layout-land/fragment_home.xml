@@ -9,7 +9,7 @@
     <ua.kpi.comsys.ip8313.ui.home.DiagramView
         android:id="@+id/diagramView"
         android:layout_width="match_parent"
-        android:layout_height="400dp"
+        android:layout_height="200dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -20,7 +20,7 @@
     <ua.kpi.comsys.ip8313.ui.home.GraphView
         android:id="@+id/graphView"
         android:layout_width="match_parent"
-        android:layout_height="500dp"
+        android:layout_height="300dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"

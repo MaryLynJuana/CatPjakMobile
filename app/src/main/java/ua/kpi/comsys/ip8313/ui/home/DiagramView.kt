@@ -1,11 +1,10 @@
 package ua.kpi.comsys.ip8313.ui.home
 
 import android.content.Context
+import android.content.res.Configuration
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
-import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.View
 import androidx.core.content.ContextCompat
@@ -25,8 +24,8 @@ class DiagramView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
-    private var outerRadius = 0.0f
-    private var innerRadius = 0.0f
+    private var outerRadius = 0F
+    private var innerRadius = 0F
     private var centerX = 0
     private var centerY = 0
     private val oval = RectF()
@@ -39,20 +38,20 @@ class DiagramView @JvmOverloads constructor(
     }
 
     override fun onSizeChanged(width: Int, height: Int, oldWidth: Int, oldHeight: Int) {
-        outerRadius = (min(width, height) / 2.0 * 0.8).toFloat()
+        outerRadius = (min(width, height) / 2.0 * 0.5).toFloat()
         innerRadius = outerRadius / 2
-    }
-
-    override fun onDraw(canvas: Canvas?) {
-        super.onDraw(canvas)
-        centerX = canvas!!.width / 2
-        centerY = canvas!!.height / 2
+        centerX = width / 2
+        centerY = height / 2
         oval.set(
             centerX - outerRadius,
             centerY - outerRadius,
             centerX + outerRadius,
             centerY + outerRadius
         )
+    }
+
+    override fun onDraw(canvas: Canvas?) {
+        super.onDraw(canvas)
         var currentAngle = 0F
         for (portion in Portion.values()) {
             val sweepAngle = calculateSweepAngle(portion)
@@ -60,8 +59,7 @@ class DiagramView @JvmOverloads constructor(
             canvas?.drawArc(oval, currentAngle, sweepAngle, true, paint)
             currentAngle += sweepAngle
         }
-        val backgroundColor = R.color.dark_grey
-        paint.color = ContextCompat.getColor(context, backgroundColor)
+        paint.color = ContextCompat.getColor(context, R.color.dark_grey)
         canvas?.drawCircle(centerX.toFloat(), centerY.toFloat(), innerRadius, paint)
     }
 }
