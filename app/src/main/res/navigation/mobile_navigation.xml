@@ -17,4 +17,10 @@
         android:label="@string/title_student"
         tools:layout="@layout/fragment_student" />
 
+    <fragment
+        android:id="@+id/navigation_books"
+        android:name="ua.kpi.comsys.ip8313.ui.books.BooksFragment"
+        android:label="@string/title_books"
+        tools:layout="@layout/fragment_books" />
+
 </navigation>
