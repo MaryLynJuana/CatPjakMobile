@@ -10,8 +10,9 @@
     <color name="dark_grey">#414141</color>
     <color name="green">#00cc62</color>
     <color name="light_green">#00ff62</color>
-    <color name="light_blue">#33fffc</color>
     <color name="purple">#a233ff</color>
     <color name="yellow">#ffff00</color>
     <color name="gray">#808080</color>
+    <color name="brown">#390000</color>
+    <color name="red">#cc0000</color>
 </resources>

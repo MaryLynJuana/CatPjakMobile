@@ -10,6 +10,7 @@ import ua.kpi.comsys.ip8313.R
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.min
+import kotlin.math.pow
 
 class GraphView@JvmOverloads constructor(
     context: Context,
@@ -17,42 +18,40 @@ class GraphView@JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
     private var centerX = 0f
-    private var centerY = 0f
+    private var centerY = - 10f
     private var one = 0F
-    private val π = PI.toFloat()
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.FILL
         strokeWidth = 8F
     }
 
     override fun onSizeChanged(width: Int, height: Int, oldWidth: Int, oldHeight: Int) {
-        one = (min(width, height) / 8.0 * 0.8).toFloat()
+        one = (min(width, height) / 8.0 * 0.1).toFloat()
     }
 
     private fun drawAxis(canvas: Canvas?, centerX: Float, centerY: Float) = with(canvas!!) {
-        val endX = centerX + π * one
-        val endY = centerY - 2F * one
+        val endX = centerX + 10F * one
+        val endY = centerY - 27F * one
         drawLines(floatArrayOf(
-            centerX - π * one, centerY, endX, centerY,
-            centerX, centerY + 2F * one, centerX, endY,
+            centerX - 10 * one, centerY, endX, centerY,
+            centerX, centerY + 27F * one, centerX, endY,
             endX, centerY, endX - 25, centerY - 25,
             endX, centerY, endX - 25, centerY + 25,
             centerX, endY, centerX - 25, endY + 25,
             centerX, endY, centerX + 25, endY + 25
         ), paint)
         drawLine(centerX + one, centerY - 10, centerX + one, centerY + 10, paint)
-        drawText("π/2", centerX + π / 2 * one - 10, centerY + 25, paint)
-        drawText("-π/2", centerX - π / 2 * one, centerY + 25, paint)
-        drawText("1", centerX - 25, centerY - one - 10, paint)
-        drawText("1", centerX + one, centerY + 25, paint)
-        drawText("0", centerX - 25, centerY + 25, paint)
+        drawText("3", centerX + 3 * one - 10, centerY + 25, paint)
+        drawText("-3", centerX - 3 * one, centerY - 10, paint)
+        drawText("27", centerX - 25, centerY - 27 * one + 10, paint)
+        drawText("-27", centerX + 10, centerY + 27 * one - 10, paint)
     }
 
     private fun drawGraph(canvas: Canvas?) = with(canvas!!) {
-        var x = - PI.toFloat()
-        for (i in 0..360) {
-            x += 2 * π / 360
-            y = cos(x)
+        var x = - 3F
+        while (x <= 3) {
+            x += 0.01F
+            y = x.pow(3)
             drawPoint(centerX + x * one, centerY - y * one, paint)
         }
     }

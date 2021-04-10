@@ -13,10 +13,11 @@ import kotlin.math.min
 
 
 private enum class Portion(val circlePercent: Int, val color: Int) {
-    LIGHT_BLUE(45, R.color.light_blue),
-    PURPLE(5, R.color.purple),
-    YELLOW(25, R.color.yellow),
-    GRAY(25, R.color.gray)
+    YELLOW(15, R.color.yellow),
+    BROWN(25, R.color.brown),
+    GRAY(45, R.color.gray),
+    RED(10, R.color.red),
+    PURPLE(5, R.color.purple)
 }
 
 class DiagramView @JvmOverloads constructor(
