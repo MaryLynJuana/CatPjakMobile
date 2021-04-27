@@ -5,38 +5,22 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContentProviderCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
 import org.json.JSONObject
+import ua.kpi.comsys.ip8313.AssetsManager
 import ua.kpi.comsys.ip8313.databinding.FragmentBooksBinding
-import java.io.IOException
 
 class BooksFragment : Fragment() {
 
     private var _binding: FragmentBooksBinding? = null
     private val binding get() = _binding!!
 
-    private fun getAssetData(filename: String): ByteArray? {
-        val buffer: ByteArray
-        try {
-            val inputStream = requireContext().assets.open(filename)
-            val size = inputStream.available()
-            buffer = ByteArray(size)
-            inputStream.use { it.read(buffer) }
-        } catch (ioException: IOException) {
-            ioException.printStackTrace()
-            return null
-        }
-        return buffer
-    }
-
-    private fun getAssetJsonData(filename: String): String? {
-        val buffer = getAssetData(filename)
-        return String(buffer!!)
-    }
+    private val assetsManager = AssetsManager(requireContext())
 
     private fun getBooks() : List<Book> {
-        val data = getAssetJsonData("BooksList.txt")
+        val data = assetsManager.getAssetJsonData("BooksList.txt")
         val booksJson = JSONObject(data).optString("books")
         return Gson().fromJson(booksJson, Array<Book>::class.java).toList()
     }
@@ -57,6 +41,7 @@ class BooksFragment : Fragment() {
         binding.recyclerView.adapter = adapter
         binding.recyclerView.layoutManager = LinearLayoutManager(context)
     }
+
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
