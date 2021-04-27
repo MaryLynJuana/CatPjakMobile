@@ -1,20 +1,19 @@
 package ua.kpi.comsys.ip8313.ui.books
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.SearchView
-import androidx.core.content.ContentProviderCompat
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView.OnChildAttachStateChangeListener
 import com.google.gson.Gson
 import org.json.JSONObject
 import ua.kpi.comsys.ip8313.AssetsManager
-import ua.kpi.comsys.ip8313.R
 import ua.kpi.comsys.ip8313.databinding.FragmentBooksBinding
+
 
 class BookListFragment : Fragment() {
 
@@ -58,6 +57,14 @@ class BookListFragment : Fragment() {
         }
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.addOnChildAttachStateChangeListener(object : OnChildAttachStateChangeListener {
+            override fun onChildViewAttachedToWindow(view: View) {
+                noBooksFoundTextView.visibility = if (adapter.itemCount == 0) View.VISIBLE else View.INVISIBLE
+            }
+            override fun onChildViewDetachedFromWindow(view: View) {
+                noBooksFoundTextView.visibility = if (adapter.itemCount == 0) View.VISIBLE else View.INVISIBLE
+            }
+        })
         addButton.setOnClickListener{ (parentFragment as BookContainerFragment).showBookCreationForm() }
         bookSearch.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
