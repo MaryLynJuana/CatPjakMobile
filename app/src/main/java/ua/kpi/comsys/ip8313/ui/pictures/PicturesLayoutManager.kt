@@ -3,6 +3,8 @@ package ua.kpi.comsys.ip8313.ui.pictures
 import android.graphics.Rect
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
+import kotlin.math.max
+import kotlin.math.min
 
 class PicturesLayoutManager: RecyclerView.LayoutManager() {
     override fun generateDefaultLayoutParams(): RecyclerView.LayoutParams {
@@ -44,68 +46,92 @@ class PicturesLayoutManager: RecyclerView.LayoutManager() {
 
     override fun onLayoutChildren(recycler: RecyclerView.Recycler, state: RecyclerView.State?) {
         detachAndScrapAttachedViews(recycler)
-        val one = width / 5
+        val one = width / 3
         var currentPos = 0
         var top = 0
-        var bottom = 0
+        var bottom = one
         var left = 0
-        var right = 0
+        var right = one
         while (currentPos < itemCount) {
             val view = recycler.getViewForPosition(currentPos)
             addView(view)
-            when (currentPos % 6) {
-                0 -> {
-                    measureChildWithMargins(view, 0, 0)
-                    var widthSpec = View.MeasureSpec.makeMeasureSpec(3 * one, View.MeasureSpec.EXACTLY)
-                    var heightSpec = View.MeasureSpec.makeMeasureSpec(3 * one, View.MeasureSpec.EXACTLY)
-                    measureChildWithDecorationsAndMargin(view, widthSpec, heightSpec)
-                }
-                1, 2 -> {
-                    measureChildWithMargins(view, 0, 0)
-                    var widthSpec = View.MeasureSpec.makeMeasureSpec(2 * one, View.MeasureSpec.EXACTLY)
-                    var heightSpec = View.MeasureSpec.makeMeasureSpec(2 * one, View.MeasureSpec.EXACTLY)
-                    measureChildWithDecorationsAndMargin(view, widthSpec, heightSpec)
-                }
-                3, 4, 5 -> {
-                    measureChildWithMargins(view, 0, 0)
-                    var widthSpec = View.MeasureSpec.makeMeasureSpec(one, View.MeasureSpec.EXACTLY)
-                    var heightSpec = View.MeasureSpec.makeMeasureSpec(one, View.MeasureSpec.EXACTLY)
-                    measureChildWithDecorationsAndMargin(view, widthSpec, heightSpec)
-                }
+
+            var widthSpec = View.MeasureSpec.makeMeasureSpec(one, View.MeasureSpec.EXACTLY)
+            var heightSpec = View.MeasureSpec.makeMeasureSpec(one, View.MeasureSpec.EXACTLY)
+            if (currentPos % 9 == 4) {
+                    widthSpec = View.MeasureSpec.makeMeasureSpec(2 * one, View.MeasureSpec.EXACTLY)
+                    heightSpec = View.MeasureSpec.makeMeasureSpec(2 * one, View.MeasureSpec.EXACTLY)
             }
 
-            when (currentPos % 6) {
+            measureChildWithDecorationsAndMargin(view, widthSpec, heightSpec)
+
+            if (currentPos == 0) {
+                layoutDecorated(view, left, top, right, bottom)
+                currentPos++
+                continue
+            }
+
+            when (currentPos % 9) {
                 0 -> {
-                    top = getDecoratedBottom(view)
-                    bottom = top + 3 * one
-                    right = 3 * one
+                    top += one
+                    bottom = top + one
+                    left = 0
+                    right = one
                 }
-                1 -> {
-                    bottom = top + 2 * one
-                    left = getDecoratedRight(view)
-                    right = width
+                1, 2 -> {
+                    left += one
+                    right = left + one
                 }
-                2 -> {
-                    top = getDecoratedBottom(view)
-                    bottom = top + 2 * one
-                }
-                3 -> {
-                    top = getDecoratedBottom(view)
+                3, 5, 6 -> {
+                    top += one
                     bottom = top + one
                     left = 0
                     right = left + one
                 }
                 4 -> {
-                    left = getDecoratedRight(view)
-                    right = left + one
+                    left += one
+                    right = left + 2 * one
+                    bottom += one
                 }
-                5 -> {
-                    left = getDecoratedRight(view)
+                7, 8 -> {
+                    left += one
                     right = left + one
                 }
             }
             layoutDecorated(view, left, top, right, bottom)
             currentPos++
         }
+    }
+
+    override fun canScrollVertically(): Boolean = true
+
+    override fun scrollVerticallyBy(dy: Int, recycler: RecyclerView.Recycler?, state: RecyclerView.State?): Int {
+        val delta = scrollVerticallyInternal(dy)
+        offsetChildrenVertical(-delta)
+        return delta
+    }
+
+    private fun scrollVerticallyInternal(dy: Int): Int {
+        if (childCount == 0) {
+            return 0
+        }
+
+        val topView = getChildAt(0)
+        val bottomView = getChildAt(childCount - 1)
+
+        val viewSpan = getDecoratedBottom(bottomView!!) - getDecoratedTop(topView!!)
+        if (viewSpan <= height) return 0
+
+        var delta = 0
+        if (dy < 0) {
+            val firstView = getChildAt(0)
+            val firstViewPosition = getPosition(firstView!!)
+            delta = if (firstViewPosition > 0) dy else max(getDecoratedTop(firstView), dy)
+        } else if (dy > 0) {
+            val lastView = getChildAt(childCount - 1)
+            val lastViewPosition = getPosition(lastView!!)
+            delta = if (lastViewPosition < itemCount - 1) dy else min(getDecoratedBottom(lastView) - height, dy)
+        }
+        return delta
     }
 }

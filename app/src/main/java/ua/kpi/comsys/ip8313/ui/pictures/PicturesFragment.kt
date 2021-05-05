@@ -40,9 +40,11 @@ class PicturesFragment : Fragment() {
     }
 
     private fun getPictureFromGallery() {
-        val intent = Intent(Intent.ACTION_PICK)
-        intent.type = "image/*"
-        startActivityForResult(intent, GET_IMAGE)
+        val intent = Intent().apply {
+            type = "image/*"
+            action = Intent.ACTION_GET_CONTENT
+        }
+        startActivityForResult(Intent.createChooser(intent, "Select Image"), GET_IMAGE)
     }
 
     private fun showPicture(picture: Uri) {
