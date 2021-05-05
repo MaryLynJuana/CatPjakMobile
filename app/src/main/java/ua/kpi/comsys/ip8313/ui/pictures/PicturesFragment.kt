@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
 import ua.kpi.comsys.ip8313.databinding.FragmentPicturesBinding
 
 class PicturesFragment : Fragment() {
@@ -31,8 +30,8 @@ class PicturesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) = with(binding) {
         super.onViewCreated(view, savedInstanceState)
         adapter = PictureAdapter(viewModel.pictureList)
-        recyclerView.adapter = adapter
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        picturesRecycler.adapter = adapter
+        picturesRecycler.layoutManager = PicturesLayoutManager()
         addButton.setOnClickListener { getPictureFromGallery() }
     }
 

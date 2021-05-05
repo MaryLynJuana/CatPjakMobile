@@ -10,11 +10,10 @@ import ua.kpi.comsys.ip8313.R
 
 class PictureAdapter(private var pictureList: MutableList<Uri>) :
     RecyclerView.Adapter<PictureAdapter.PictureViewHolder>() {
-    var onClicked: (Uri) -> Unit = {}
     inner class PictureViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val pictureView = view.findViewById<ImageView>(R.id.picture_view)
-        fun bindViewContent(picture: Uri, onClicked: (Uri) -> Unit) {
-            pictureView.setImageURI(picture)
+        private val pictureImgView = view.findViewById<ImageView>(R.id.picture_view)
+        fun bindViewContent(picture: Uri) {
+            pictureImgView.setImageURI(picture)
         }
     }
 
@@ -25,7 +24,7 @@ class PictureAdapter(private var pictureList: MutableList<Uri>) :
     }
 
     override fun onBindViewHolder(holder: PictureViewHolder, position: Int) {
-        holder.bindViewContent(pictureList[position], onClicked)
+        holder.bindViewContent(pictureList[position])
     }
 
     override fun getItemCount() = pictureList.size
