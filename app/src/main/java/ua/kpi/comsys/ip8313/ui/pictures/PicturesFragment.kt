@@ -1,13 +1,11 @@
 package ua.kpi.comsys.ip8313.ui.pictures
 
-import android.app.Activity
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import ua.kpi.comsys.ip8313.databinding.FragmentPicturesBinding
 
@@ -29,34 +27,13 @@ class PicturesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) = with(binding) {
         super.onViewCreated(view, savedInstanceState)
-        adapter = PictureAdapter(viewModel.pictureList)
+        adapter = PictureAdapter(viewModel.pictureList.value?.toMutableList()?: mutableListOf())
         picturesRecycler.adapter = adapter
         picturesRecycler.layoutManager = PicturesLayoutManager()
-        addButton.setOnClickListener { getPictureFromGallery() }
-    }
-
-    companion object {
-        private const val GET_IMAGE = 1
-    }
-
-    private fun getPictureFromGallery() {
-        val intent = Intent().apply {
-            type = "image/*"
-            action = Intent.ACTION_GET_CONTENT
-        }
-        startActivityForResult(Intent.createChooser(intent, "Select Image"), GET_IMAGE)
-    }
-
-    private fun showPicture(picture: Uri) {
-        viewModel.pictureList.add(picture)
-        adapter.notifyDataSetChanged()
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK && requestCode == GET_IMAGE){
-            data?.data?.let(this::showPicture)
-        }
+        viewModel.loadPictures("night+city")
+        viewModel.pictureList.observe(viewLifecycleOwner, Observer {
+            adapter.update(it.toMutableList())
+        })
     }
 
     override fun onDestroy() {

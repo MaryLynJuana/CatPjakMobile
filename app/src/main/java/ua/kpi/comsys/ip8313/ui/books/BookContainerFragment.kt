@@ -20,12 +20,6 @@ class BookContainerFragment: Fragment() {
         }
     }
 
-    fun showBookCreationForm() {
-        childFragmentManager.commit {
-            replace(R.id.book_container, BookCreationFragment())
-        }
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

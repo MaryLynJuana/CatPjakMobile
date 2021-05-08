@@ -5,13 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView.OnChildAttachStateChangeListener
-import com.google.gson.Gson
-import org.json.JSONObject
-import ua.kpi.comsys.ip8313.AssetsManager
 import ua.kpi.comsys.ip8313.databinding.FragmentBooksBinding
 
 
@@ -23,19 +21,6 @@ class BookListFragment : Fragment() {
     private lateinit var viewModel: BookViewModel
 
     private lateinit var adapter: BookAdapter
-
-    private val assetsManager by lazy { AssetsManager(requireContext()) }
-
-    private fun getBooks() : MutableList<Book> {
-        val data = assetsManager.getAssetData("BooksList.txt")
-        val booksJson = JSONObject(String(data!!)).optString("books")
-        return Gson().fromJson(booksJson, Array<Book>::class.java).toMutableList()
-    }
-
-    private fun getBookInfo(bookId: String) : Book? {
-        val data = assetsManager.getAssetData("$bookId.txt") ?: return null
-        return Gson().fromJson(String(data), Book::class.java)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,32 +34,40 @@ class BookListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) = with(binding) {
         super.onViewCreated(view, savedInstanceState)
-        if (viewModel.bookList.isEmpty()) viewModel.bookList.addAll(getBooks())
-        adapter = BookAdapter(viewModel.bookList)
+        adapter = BookAdapter(viewModel.bookList.value?.toMutableList() ?: mutableListOf())
         adapter.onClicked = {
-            viewModel.currentBook = getBookInfo(it.isbn13) ?: it
-            (parentFragment as BookContainerFragment).showBookItem()
+            viewModel.loadBookData(it.isbn13)
         }
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(context)
-        recyclerView.addOnChildAttachStateChangeListener(object : OnChildAttachStateChangeListener {
-            override fun onChildViewAttachedToWindow(view: View) {
-                noBooksFoundTextView.visibility = if (adapter.itemCount == 0) View.VISIBLE else View.INVISIBLE
-            }
-            override fun onChildViewDetachedFromWindow(view: View) {
-                noBooksFoundTextView.visibility = if (adapter.itemCount == 0) View.VISIBLE else View.INVISIBLE
-            }
-        })
-        addButton.setOnClickListener{ (parentFragment as BookContainerFragment).showBookCreationForm() }
+
+        bookSearch.setQuery(viewModel.searchQuery, false)
         bookSearch.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
             }
             override fun onQueryTextChange(newText: String?): Boolean {
-                adapter.filter.filter(newText)
-                return false
+                viewModel.searchQuery = binding.bookSearch.query.toString()
+                if (newText.isNullOrBlank() || newText.length < 3) {
+                    adapter.update(mutableListOf())
+                    return false
+                }
+                val specialChars = Regex("[$&+,:;=\\\\?@#|/'<>.^*()%!-]")
+                if (newText.contains(specialChars)) {
+                    Toast.makeText(requireContext(), "Special characters not allowed", Toast.LENGTH_LONG).show()
+                    return false
+                }
+                viewModel.loadSearchedBooks(newText)
+                return true
             }
-
+        })
+        viewModel.bookList.observe(viewLifecycleOwner, Observer {
+            adapter.update(it.toMutableList())
+            if (it.isEmpty()) Toast.makeText(requireContext(), "No items found", Toast.LENGTH_LONG).show()
+        })
+        viewModel.currentBook.observe(viewLifecycleOwner, Observer {
+            if (it == null) return@Observer
+            (parentFragment as BookContainerFragment).showBookItem()
         })
     }
 

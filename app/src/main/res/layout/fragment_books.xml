@@ -16,7 +16,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:background="@color/light_green"
-        android:layout_marginBottom="5dp"/>
+        android:layout_marginBottom="5dp"
+        android:queryHint="Please enter 3 or more characters" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
@@ -26,27 +27,4 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/book_search" />
-    <TextView
-        android:id="@+id/no_books_found_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:visibility="invisible"
-        android:text="@string/no_items_found_text" />
-    <Button
-        android:id="@+id/add_button"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="15dp"
-        android:textColor="@color/white"
-        android:textSize="50dp"
-        android:gravity="center"
-        android:textAlignment="center"
-        android:background="@drawable/button_round"
-        android:text="@string/add_button_text" />
 </androidx.constraintlayout.widget.ConstraintLayout>

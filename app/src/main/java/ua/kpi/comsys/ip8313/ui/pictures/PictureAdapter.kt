@@ -1,19 +1,23 @@
 package ua.kpi.comsys.ip8313.ui.pictures
 
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
+import com.squareup.picasso.Picasso
 import ua.kpi.comsys.ip8313.R
 
-class PictureAdapter(private var pictureList: MutableList<Uri>) :
+class PictureAdapter(private var pictureList: MutableList<PictureData>) :
     RecyclerView.Adapter<PictureAdapter.PictureViewHolder>() {
     inner class PictureViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val pictureImgView = view.findViewById<ImageView>(R.id.picture_view)
-        fun bindViewContent(picture: Uri) {
-            pictureImgView.setImageURI(picture)
+        fun bindViewContent(pictureUrl: String) {
+            Picasso.get()
+                .load(pictureUrl)
+                .placeholder(R.drawable.progress_animated)
+                .error(R.drawable.ic_book)
+                .into(pictureImgView)
         }
     }
 
@@ -24,8 +28,13 @@ class PictureAdapter(private var pictureList: MutableList<Uri>) :
     }
 
     override fun onBindViewHolder(holder: PictureViewHolder, position: Int) {
-        holder.bindViewContent(pictureList[position])
+        holder.bindViewContent(pictureList[position].webformatURL)
     }
 
     override fun getItemCount() = pictureList.size
+
+    fun update(newPictureList: MutableList<PictureData>) {
+        this.pictureList = newPictureList
+        notifyDataSetChanged()
+    }
 }

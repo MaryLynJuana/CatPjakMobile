@@ -6,14 +6,17 @@ import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.addCallback
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.squareup.picasso.Picasso
 import ua.kpi.comsys.ip8313.R
 import ua.kpi.comsys.ip8313.databinding.FragmentBookItemBinding
 
 
-class BookItemFragment() : Fragment() {
+class BookItemFragment : Fragment() {
     private var _binding: FragmentBookItemBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewModel: BookViewModel
@@ -25,31 +28,22 @@ class BookItemFragment() : Fragment() {
     ): View? {
         viewModel = ViewModelProvider(requireActivity()).get(BookViewModel::class.java)
         _binding = FragmentBookItemBinding.inflate(inflater, container, false)
-        view?.isFocusableInTouchMode = true
-        view?.requestFocus()
-        view?.setOnKeyListener(View.OnKeyListener { _, keyCode, event ->
-            if (event.action === KeyEvent.ACTION_DOWN) {
-                if (keyCode == KeyEvent.KEYCODE_BACK) {
-                    (parentFragment as BookContainerFragment).showBookList()
-                    return@OnKeyListener true
-                }
-            }
-            false
-        })
         return binding.root
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) = with(binding) {
         super.onViewCreated(view, savedInstanceState)
-        val currentBook = viewModel.currentBook
+        val currentBook = viewModel.currentBook.value
         if (currentBook?.image.isNullOrBlank()) {
             bookImage.setImageDrawable(
                 ContextCompat.getDrawable(requireContext(), R.drawable.ic_book)
             )
         }
         else {
-            val inputStream = requireContext().assets.open("Images/${currentBook?.image}")
-            bookImage.setImageDrawable(Drawable.createFromStream(inputStream, null))
-            inputStream.close()
+            Picasso.get()
+                .load(currentBook?.image)
+                .placeholder(R.drawable.progress_animated)
+                .error(R.drawable.ic_book)
+                .into(bookImage)
         }
         bookTitle.text ="Title: ${currentBook?.title}"
         bookSubtitle.text = "Subtitle: ${currentBook?.subtitle}"
@@ -64,7 +58,10 @@ class BookItemFragment() : Fragment() {
         view.isFocusableInTouchMode = true
         view.requestFocus()
         view.setOnKeyListener { _, keyCode, _ ->
-            if (keyCode == KeyEvent.KEYCODE_BACK) (parentFragment as BookContainerFragment).showBookList()
+            if (keyCode == KeyEvent.KEYCODE_BACK) {
+                viewModel.currentBook.postValue(null)
+                (parentFragment as BookContainerFragment).showBookList()
+            }
             return@setOnKeyListener true
         }
     }
