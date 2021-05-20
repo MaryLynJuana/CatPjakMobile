@@ -9,25 +9,32 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import kotlinx.coroutines.launch
 import ua.kpi.comsys.ip8313.databinding.FragmentBooksBinding
-
+import ua.kpi.comsys.ip8313.ui.pictures.PictureLocalDataSource
+import ua.kpi.comsys.ip8313.ui.pictures.PictureRemoteDataSource
+import ua.kpi.comsys.ip8313.ui.pictures.PictureRepository
+import ua.kpi.comsys.ip8313.ui.pictures.getPicturesApi
 
 class BookListFragment : Fragment() {
-
     private var _binding: FragmentBooksBinding? = null
     private val binding get() = _binding!!
-
     private lateinit var viewModel: BookViewModel
-
     private lateinit var adapter: BookAdapter
+    private lateinit var db: BookDatabase
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        lifecycleScope.launch {
+            db = BookDatabase.getDatabase(requireContext())
+        }
         viewModel = ViewModelProvider(requireActivity()).get(BookViewModel::class.java)
+        viewModel.repository = BookRepository(BookRemoteDataSource(getBookApi()), BookLocalDataSource(db))
         _binding = FragmentBooksBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -62,6 +69,10 @@ class BookListFragment : Fragment() {
             }
         })
         viewModel.bookList.observe(viewLifecycleOwner, Observer {
+            if (it == null) {
+                Toast.makeText(requireContext(), "Could not load data", Toast.LENGTH_LONG).show()
+                return@Observer
+            }
             adapter.update(it.toMutableList())
             if (it.isEmpty()) Toast.makeText(requireContext(), "No items found", Toast.LENGTH_LONG).show()
         })

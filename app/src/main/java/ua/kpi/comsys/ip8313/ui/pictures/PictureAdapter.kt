@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import ua.kpi.comsys.ip8313.R
 
-class PictureAdapter(private var pictureList: MutableList<PictureData>) :
+class PictureAdapter(private var pictureList: MutableList<Picture>) :
     RecyclerView.Adapter<PictureAdapter.PictureViewHolder>() {
     inner class PictureViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val pictureImgView = view.findViewById<ImageView>(R.id.picture_view)
@@ -33,7 +33,7 @@ class PictureAdapter(private var pictureList: MutableList<PictureData>) :
 
     override fun getItemCount() = pictureList.size
 
-    fun update(newPictureList: MutableList<PictureData>) {
+    fun update(newPictureList: MutableList<Picture>) {
         this.pictureList = newPictureList
         notifyDataSetChanged()
     }

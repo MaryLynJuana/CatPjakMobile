@@ -7,9 +7,9 @@ import kotlinx.coroutines.launch
 
 class BookViewModel: ViewModel() {
     var searchQuery = ""
-    val bookList = MutableLiveData<List<Book>>()
-    var currentBook = MutableLiveData<Book>()
-    private val repository = BookRepository(BookRemoteDataSource(getBookApi()))
+    val bookList = MutableLiveData<List<Book>?>()
+    var currentBook = MutableLiveData<Book?>()
+    lateinit var repository: BookRepository
     fun loadSearchedBooks(searchQuery: String) {
         viewModelScope.launch {
             val res = repository.getSearchedBooks(searchQuery)

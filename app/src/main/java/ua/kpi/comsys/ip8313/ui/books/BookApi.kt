@@ -6,6 +6,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Path
+import java.util.concurrent.TimeUnit
 
 
 interface BookApi {
@@ -18,7 +19,9 @@ interface BookApi {
 fun getBookApi(): BookApi {
     val interceptor = HttpLoggingInterceptor()
     interceptor.level = HttpLoggingInterceptor.Level.BODY
-    val client = OkHttpClient.Builder().addInterceptor(interceptor).build()
+    val client = OkHttpClient.Builder()
+        .callTimeout(1, TimeUnit.SECONDS)
+        .addInterceptor(interceptor).build()
     val retrofit = Retrofit.Builder()
         .baseUrl("https://api.itbook.store/" )
         .client(client)

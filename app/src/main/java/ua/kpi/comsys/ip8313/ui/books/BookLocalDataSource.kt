@@ -1,17 +1,17 @@
 package ua.kpi.comsys.ip8313.ui.books
 
-class BookRemoteDataSource(private val api: BookApi): BookDataSource {
+class BookLocalDataSource(private val db: BookDatabase): BookDataSource {
     override suspend fun getSearchedBooks(searchQuery: String): List<Book> {
-        return api.getSearchedBooks(req = searchQuery).books
+        return db.bookDao().getSearchedBooks(searchQuery)
     }
     override suspend fun getBookData(bookId: String): Book {
-        return api.getBookData(id = bookId)
+        return db.bookDao().getBookData(bookId)
     }
     override suspend fun saveBooks(bookList: List<Book>) {
-        TODO("Not yet implemented")
+        db.bookDao().saveBooks(bookList)
     }
 
     override suspend fun saveBookData(book: Book) {
-        TODO("Not yet implemented")
+        db.bookDao().saveBookData(book)
     }
 }
